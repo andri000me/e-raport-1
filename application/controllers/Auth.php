@@ -29,23 +29,26 @@ class Auth extends CI_Controller {
 		
 		$user = $this->db->get_where('users', ['user_name'=>$username])->row_array();
 		if($user){
-			if($user['is_active'] == 1){
-				if($user['is_block'] == 0){
-					if(password_verify($password, $user['user_password'])){
-						$data = [
-							'username' => $user['user_name'],
-							'access' => $user['user_type']
-						];
-						$this->session->set_userdata($data);
-						redirect('dashboard');
+			if($user['is_block'] == 0){
+				if(password_verify($password, $user['user_password'])){
+					$data = [
+						'id' => $user['idusers'],
+						'username' => $user['user_name'],
+						'access' => $user['user_type']
+					];
+					$this->session->set_userdata($data);
+					if(__session('access')=='guru'){
+						redirect('siswa');
+					}elseif(__session('access')=='siswa'){
+						redirect('siswa/biodata');
 					}else{
-						$this->session->set_flashdata('msg', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="fa fa-ban"></i> Password anda salah.</div>');
+						redirect('dashboard');
 					}
 				}else{
-					$this->session->set_flashdata('msg', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="fa fa-ban"></i> Akun anda diblok.</div>');
+					$this->session->set_flashdata('msg', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="fa fa-ban"></i> Password anda salah.</div>');
 				}
 			}else{
-				$this->session->set_flashdata('msg', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="fa fa-ban"></i> Akun anda sudah tidak aktif.</div>');
+				$this->session->set_flashdata('msg', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="fa fa-ban"></i> Akun anda diblok.</div>');
 			}
 		}else{
 			$this->session->set_flashdata('msg', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="fa fa-ban"></i> Username tidak terdaftar.</div>');

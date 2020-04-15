@@ -4,6 +4,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class User_m extends CI_Model {
 
+	public static $pk = 'idusers';
+
+	public static $table = 'users';
 	
 	public function __construct()
 	{
@@ -28,6 +31,9 @@ class User_m extends CI_Model {
 	}
 	public function getUserById($id){
 		return $this->db->get_where('users',['idusers'=>$id])->row();
+	}
+	public function getData(){
+		return $this->db->get('users')->result();
 	}
 
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 20, 2020 at 10:28 PM
+-- Generation Time: Apr 15, 2020 at 09:56 AM
 -- Server version: 10.1.34-MariaDB
 -- PHP Version: 7.2.7
 
@@ -30,13 +30,24 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `guru` (
   `idguru` int(4) NOT NULL,
-  `guru_nip` varchar(25) DEFAULT NULL,
-  `guru_nama` varchar(128) DEFAULT NULL,
-  `guru_tmp_lhr` varchar(128) DEFAULT NULL,
-  `guru_tgl_lhr` date DEFAULT NULL,
-  `guru_jk` enum('L','P') DEFAULT NULL,
-  `guru_alamat` text
+  `nip` varchar(25) DEFAULT NULL,
+  `nama` varchar(128) DEFAULT NULL,
+  `tmp_lhr` varchar(128) DEFAULT NULL,
+  `tgl_lhr` date DEFAULT NULL,
+  `jk` enum('L','P') DEFAULT NULL,
+  `alamat` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `guru`
+--
+
+INSERT INTO `guru` (`idguru`, `nip`, `nama`, `tmp_lhr`, `tgl_lhr`, `jk`, `alamat`) VALUES
+(7, '92060112710970001', 'Eka Saputra, A.Md', 'Bintuni', '1997-10-27', 'L', 'Jalur 5 SP 1 Kampung Waraitama'),
+(8, '92060112710970002', 'Eka Saputre, A.Md', 'Bintuni 1', '1997-10-28', 'P', 'Jalur 5 SP 1 Kampung Waraitama'),
+(9, '92060112710970003', 'Eka Saputri, A.Md', 'Bintuni 2', '1997-10-29', 'L', 'Jalur 5 SP 1 Kampung Waraitama'),
+(10, '92060112710970004', 'Eka Saputru, A.Md', 'Bintuni 3', '1997-10-22', 'P', 'Jalur 5 SP 1 Kampung Waraitama'),
+(12, '92060112710970005', 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', 'Jalur 5 SP 1 Kampung Waraitama');
 
 -- --------------------------------------------------------
 
@@ -47,9 +58,16 @@ CREATE TABLE `guru` (
 CREATE TABLE `kelas` (
   `idkelas` int(4) NOT NULL,
   `kelas_kd` varchar(10) DEFAULT NULL,
-  `kelas_nama` varchar(20) DEFAULT NULL,
-  `kelas_sub_nama` varchar(20) NOT NULL
+  `kelas_nama` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `kelas`
+--
+
+INSERT INTO `kelas` (`idkelas`, `kelas_kd`, `kelas_nama`) VALUES
+(1, '1A', 'Kelas 1 A'),
+(2, '1B', 'Kelas 1 B');
 
 -- --------------------------------------------------------
 
@@ -63,6 +81,15 @@ CREATE TABLE `mapel` (
   `mapel_nama` varchar(128) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `mapel`
+--
+
+INSERT INTO `mapel` (`idmapel`, `mapel_kd`, `mapel_nama`) VALUES
+(1, 'MTK', 'Matematika'),
+(2, 'BING', 'Bahasa Inggris'),
+(3, 'BIND', 'Bahasa Indonesia');
+
 -- --------------------------------------------------------
 
 --
@@ -71,11 +98,37 @@ CREATE TABLE `mapel` (
 
 CREATE TABLE `mengajar` (
   `idmengajar` int(4) NOT NULL,
-  `tahun_akademik_idtahun_akademik` int(11) NOT NULL,
-  `guru_idguru` int(4) NOT NULL,
-  `mapel_idmapel` int(4) NOT NULL,
+  `idtahun_akademik` int(11) NOT NULL,
+  `semester` enum('Ganjil','Genap') DEFAULT NULL,
+  `idguru` int(4) NOT NULL,
+  `idmapel` int(4) NOT NULL,
+  `idkelas` int(4) NOT NULL,
   `kkm` int(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `mengajar`
+--
+
+INSERT INTO `mengajar` (`idmengajar`, `idtahun_akademik`, `semester`, `idguru`, `idmapel`, `idkelas`, `kkm`) VALUES
+(18, 5, 'Ganjil', 7, 3, 1, 60),
+(22, 5, 'Genap', 7, 1, 1, NULL),
+(23, 5, 'Genap', 7, 1, 2, NULL),
+(24, 5, 'Genap', 7, 3, 1, NULL),
+(25, 5, 'Genap', 7, 3, 2, NULL),
+(28, 5, 'Genap', 8, 2, 1, NULL),
+(29, 5, 'Genap', 7, 2, 2, NULL),
+(30, 5, 'Ganjil', 9, 2, 1, 65),
+(31, 5, 'Ganjil', 10, 2, 2, 60),
+(32, 5, 'Ganjil', 7, 1, 1, 60),
+(33, 5, 'Ganjil', 7, 1, 2, 65),
+(34, 5, 'Ganjil', 8, 3, 2, 0),
+(41, 7, 'Ganjil', 7, 3, 1, NULL),
+(42, 7, 'Ganjil', 9, 2, 1, NULL),
+(43, 7, 'Ganjil', 10, 2, 2, NULL),
+(44, 7, 'Ganjil', 7, 1, 1, NULL),
+(45, 7, 'Ganjil', 7, 1, 2, NULL),
+(46, 7, 'Ganjil', 8, 3, 2, NULL);
 
 -- --------------------------------------------------------
 
@@ -85,8 +138,11 @@ CREATE TABLE `mengajar` (
 
 CREATE TABLE `nilai` (
   `idnilai` int(11) NOT NULL,
-  `mapel_idmapel` int(4) NOT NULL,
-  `siswa_idsiswa` int(4) NOT NULL,
+  `idtahun_akademik` int(4) NOT NULL,
+  `semester` enum('Ganjil','Genap') DEFAULT NULL,
+  `idkelas` int(4) NOT NULL,
+  `idmapel` int(4) NOT NULL,
+  `idsiswa` int(4) NOT NULL,
   `nilai_tp1` int(4) DEFAULT NULL,
   `nilai_tp2` int(4) DEFAULT NULL,
   `nilai_tp3` int(4) DEFAULT NULL,
@@ -110,6 +166,96 @@ CREATE TABLE `nilai` (
   `deskripsi` mediumtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `nilai`
+--
+
+INSERT INTO `nilai` (`idnilai`, `idtahun_akademik`, `semester`, `idkelas`, `idmapel`, `idsiswa`, `nilai_tp1`, `nilai_tp2`, `nilai_tp3`, `nilai_tp4`, `nilai_tp5`, `nilai_tp6`, `nilai_tp7`, `rata_tp`, `nilai_uh1`, `nilai_uh2`, `nilai_uh3`, `nilai_uh4`, `nilai_uh5`, `nilai_uh6`, `nilai_uh7`, `rata_uh`, `nilai_pts`, `nilai_uas`, `nilai_akhir`, `nilai_huruf`, `deskripsi`) VALUES
+(17, 5, 'Ganjil', 1, 3, 4, 12, 0, 0, 0, 0, 0, 0, 12, 34, 0, 0, 0, 0, 0, 0, 34, 56, 78, 45, 'D', 'Kurang Baik'),
+(18, 5, 'Ganjil', 1, 3, 5, 23, 0, 0, 0, 0, 0, 0, 23, 45, 0, 0, 0, 0, 0, 0, 45, 67, 89, 56, 'D', 'Kurang Baik'),
+(19, 5, 'Ganjil', 1, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(20, 5, 'Ganjil', 1, 3, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(21, 5, 'Ganjil', 1, 3, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(22, 5, 'Ganjil', 1, 3, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(23, 5, 'Ganjil', 1, 3, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(24, 5, 'Ganjil', 1, 3, 16, 89, 21, 0, 0, 0, 0, 0, 55, 98, 89, 0, 0, 0, 0, 0, 94, 95, 95, 85, 'B', 'Baik'),
+(25, 5, 'Ganjil', 2, 3, 9, 12, 11, 0, 0, 0, 0, 0, 12, 21, 90, 0, 0, 0, 0, 0, 56, 55, 55, 44, 'B', 'Baik'),
+(26, 5, 'Ganjil', 2, 3, 10, 23, 21, 0, 0, 0, 0, 0, 22, 32, 89, 0, 0, 0, 0, 0, 61, 60, 60, 51, 'B', 'Baik'),
+(27, 5, 'Ganjil', 2, 3, 11, 34, 32, 0, 0, 0, 0, 0, 33, 43, 78, 0, 0, 0, 0, 0, 61, 65, 65, 56, 'B', 'Baik'),
+(28, 5, 'Ganjil', 2, 3, 12, 45, 43, 0, 0, 0, 0, 0, 44, 54, 67, 0, 0, 0, 0, 0, 61, 70, 70, 61, 'B', 'Baik'),
+(29, 5, 'Ganjil', 2, 3, 13, 56, 54, 0, 0, 0, 0, 0, 55, 65, 56, 0, 0, 0, 0, 0, 61, 75, 75, 66, 'B', 'Baik'),
+(30, 5, 'Ganjil', 2, 3, 17, 67, 65, 0, 0, 0, 0, 0, 66, 76, 45, 0, 0, 0, 0, 0, 61, 80, 80, 72, 'A', 'Sangat Baik'),
+(31, 5, 'Ganjil', 2, 3, 18, 78, 76, 0, 0, 0, 0, 0, 77, 87, 34, 0, 0, 0, 0, 0, 61, 85, 85, 77, 'A', 'Sangat Baik'),
+(32, 5, 'Ganjil', 2, 3, 19, 89, 87, 0, 0, 0, 0, 0, 88, 98, 23, 0, 0, 0, 0, 0, 61, 90, 90, 82, 'A', 'Sangat Baik'),
+(33, 5, 'Ganjil', 2, 3, 20, 90, 98, 0, 0, 0, 0, 0, 94, 90, 12, 0, 0, 0, 0, 0, 51, 95, 95, 84, 'A', 'Sangat Baik'),
+(34, 5, 'Ganjil', 1, 2, 4, 56, 78, 0, 0, 0, 0, 0, 67, 76, 77, 0, 0, 0, 0, 0, 77, 87, 89, 80, 'B', 'Baik'),
+(35, 5, 'Ganjil', 1, 2, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(36, 5, 'Ganjil', 1, 2, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(37, 5, 'Ganjil', 1, 2, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(38, 5, 'Ganjil', 1, 2, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(39, 5, 'Ganjil', 1, 2, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(40, 5, 'Ganjil', 1, 2, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(41, 5, 'Ganjil', 1, 2, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(42, 5, 'Ganjil', 2, 1, 9, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(43, 5, 'Ganjil', 2, 1, 10, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(44, 5, 'Ganjil', 2, 1, 11, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(45, 5, 'Ganjil', 2, 1, 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(46, 5, 'Ganjil', 2, 1, 13, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(47, 5, 'Ganjil', 2, 1, 17, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(48, 5, 'Ganjil', 2, 1, 18, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(49, 5, 'Ganjil', 2, 1, 19, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(50, 5, 'Ganjil', 2, 1, 20, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(60, 5, 'Ganjil', 2, 2, 9, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(61, 5, 'Ganjil', 2, 2, 10, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(62, 5, 'Ganjil', 2, 2, 11, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(63, 5, 'Ganjil', 2, 2, 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(64, 5, 'Ganjil', 2, 2, 13, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(65, 5, 'Ganjil', 2, 2, 17, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(66, 5, 'Ganjil', 2, 2, 18, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(67, 5, 'Ganjil', 1, 1, 4, 56, 78, 0, 0, 0, 0, 0, 67, 89, 87, 0, 0, 0, 0, 0, 88, 80, 86, 80, 'B', 'Baik'),
+(68, 5, 'Ganjil', 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(69, 5, 'Ganjil', 1, 1, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(70, 5, 'Ganjil', 1, 1, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(71, 5, 'Ganjil', 1, 1, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(72, 5, 'Ganjil', 1, 1, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(73, 5, 'Ganjil', 1, 1, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', ''),
+(74, 5, 'Ganjil', 1, 1, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `profil_sekolah`
+--
+
+CREATE TABLE `profil_sekolah` (
+  `idprofil_sekolah` int(4) NOT NULL,
+  `nama` varchar(128) DEFAULT NULL,
+  `npsn` varchar(10) DEFAULT NULL,
+  `status` enum('Negeri','Swasta') DEFAULT NULL,
+  `nama_kepsek` varchar(128) DEFAULT NULL,
+  `nip_kepsek` varchar(25) DEFAULT NULL,
+  `akreditasi` enum('kosong','A','B','C') DEFAULT NULL,
+  `logo` varchar(128) DEFAULT NULL,
+  `provinsi` varchar(128) DEFAULT NULL,
+  `kabupaten` varchar(128) DEFAULT NULL,
+  `kecamatan` varchar(128) DEFAULT NULL,
+  `kelurahan` varchar(128) DEFAULT NULL,
+  `dusun` varchar(128) DEFAULT NULL,
+  `rt` varchar(5) DEFAULT NULL,
+  `rw` varchar(5) DEFAULT NULL,
+  `alamat` varchar(256) DEFAULT NULL,
+  `kodepos` varchar(10) DEFAULT NULL,
+  `lintang` varchar(15) DEFAULT NULL,
+  `bujur` varchar(15) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `profil_sekolah`
+--
+
+INSERT INTO `profil_sekolah` (`idprofil_sekolah`, `nama`, `npsn`, `status`, `nama_kepsek`, `nip_kepsek`, `akreditasi`, `logo`, `provinsi`, `kabupaten`, `kecamatan`, `kelurahan`, `dusun`, `rt`, `rw`, `alamat`, `kodepos`, `lintang`, `bujur`) VALUES
+(1, 'SD NEGERI 02 AMBAN', '60401524', 'Swasta', 'Erlika Naibaho', '-', 'B', 'logo-sekolah.jpg', 'Papua Barat', 'Kab. Manokwari', 'Kec. Manokwari Barat', 'Amban', 'Amban', '001', '001', 'Jl. Gunung Salju', '98314', '0', '134');
+
 -- --------------------------------------------------------
 
 --
@@ -118,11 +264,47 @@ CREATE TABLE `nilai` (
 
 CREATE TABLE `rombel` (
   `idrombel` int(4) NOT NULL,
-  `tahun_akademik_idtahun_akademik` int(4) NOT NULL,
-  `guru_idguru` int(4) NOT NULL,
-  `kelas_idkelas` int(4) NOT NULL,
-  `siswa_idsiswa` int(4) NOT NULL
+  `idwali_kelas` int(4) NOT NULL,
+  `idsiswa` int(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `rombel`
+--
+
+INSERT INTO `rombel` (`idrombel`, `idwali_kelas`, `idsiswa`) VALUES
+(1, 1, 4),
+(2, 1, 5),
+(3, 1, 6),
+(4, 1, 7),
+(5, 1, 8),
+(6, 2, 9),
+(7, 2, 10),
+(8, 2, 11),
+(9, 2, 12),
+(10, 2, 13),
+(11, 1, 14),
+(12, 1, 15),
+(13, 1, 16),
+(14, 2, 17),
+(15, 2, 18),
+(16, 2, 19),
+(17, 2, 20),
+(19, 5, 5),
+(20, 5, 6),
+(21, 5, 7),
+(22, 5, 8),
+(23, 5, 14),
+(24, 5, 15),
+(25, 5, 16),
+(26, 6, 9),
+(27, 6, 10),
+(28, 6, 11),
+(29, 6, 12),
+(30, 6, 13),
+(31, 6, 17),
+(32, 6, 18),
+(33, 6, 19);
 
 -- --------------------------------------------------------
 
@@ -132,31 +314,56 @@ CREATE TABLE `rombel` (
 
 CREATE TABLE `siswa` (
   `idsiswa` int(4) NOT NULL,
-  `siswa_nis` varchar(5) DEFAULT NULL,
-  `siswa_nisn` varchar(15) DEFAULT NULL,
-  `siswa_nik` varchar(25) DEFAULT NULL,
-  `siswa_nama` varchar(128) DEFAULT NULL,
-  `siswa_tmp_lhr` varchar(128) DEFAULT NULL,
-  `siswa_tgl_lhr` date DEFAULT NULL,
-  `siswa_jk` enum('L','P') DEFAULT NULL,
-  `siswa_hobi` varchar(128) DEFAULT NULL,
-  `siswa_citacita` varchar(128) DEFAULT NULL,
-  `siswa_sts_anak` enum('Anak Kandung','Anak Tiri','Anak Angkat') DEFAULT NULL,
-  `siswa_jml_sdr` int(2) DEFAULT NULL,
-  `siswa_anak_ke` int(2) DEFAULT NULL,
-  `siswa_alamat` text,
-  `siswa_nik_ayah` varchar(25) DEFAULT NULL,
-  `siswa_nama_ayah` varchar(128) DEFAULT NULL,
-  `siswa_pend_ayah` varchar(50) DEFAULT NULL,
-  `siswa_pekr_ayah` varchar(50) DEFAULT NULL,
-  `siswa_nik_ibu` varchar(25) DEFAULT NULL,
-  `siswa_nama_ibu` varchar(128) DEFAULT NULL,
-  `siswa_pend_ibu` varchar(50) DEFAULT NULL,
-  `siswa_pekr_ibu` varchar(50) DEFAULT NULL,
-  `siswa_alamat_ortu` text,
+  `foto` varchar(128) DEFAULT NULL,
+  `nis` varchar(5) DEFAULT NULL,
+  `nisn` varchar(15) DEFAULT NULL,
+  `nik` varchar(25) DEFAULT NULL,
+  `nama` varchar(128) DEFAULT NULL,
+  `tmp_lhr` varchar(128) DEFAULT NULL,
+  `tgl_lhr` date DEFAULT NULL,
+  `jk` enum('L','P') DEFAULT NULL,
+  `hobi` varchar(128) DEFAULT NULL,
+  `citacita` varchar(128) DEFAULT NULL,
+  `sts_anak` enum('Anak Kandung','Anak Tiri','Anak Angkat') DEFAULT NULL,
+  `jml_sdr` int(2) DEFAULT NULL,
+  `anak_ke` int(2) DEFAULT NULL,
+  `alamat` text,
+  `nik_ayah` varchar(25) DEFAULT NULL,
+  `nama_ayah` varchar(128) DEFAULT NULL,
+  `pend_ayah` varchar(50) DEFAULT NULL,
+  `pekr_ayah` varchar(50) DEFAULT NULL,
+  `nik_ibu` varchar(25) DEFAULT NULL,
+  `nama_ibu` varchar(128) DEFAULT NULL,
+  `pend_ibu` varchar(50) DEFAULT NULL,
+  `pekr_ibu` varchar(50) DEFAULT NULL,
+  `alamat_ortu` text,
   `tgl_masuk` date DEFAULT NULL,
-  `tgl_keluar` date DEFAULT NULL
+  `tgl_keluar` date DEFAULT NULL,
+  `status` enum('Aktif','Nonaktif','Pindah','Keluar','Alumni') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `siswa`
+--
+
+INSERT INTO `siswa` (`idsiswa`, `foto`, `nis`, `nisn`, `nik`, `nama`, `tmp_lhr`, `tgl_lhr`, `jk`, `hobi`, `citacita`, `sts_anak`, `jml_sdr`, `anak_ke`, `alamat`, `nik_ayah`, `nama_ayah`, `pend_ayah`, `pekr_ayah`, `nik_ibu`, `nama_ibu`, `pend_ibu`, `pekr_ibu`, `alamat_ortu`, `tgl_masuk`, `tgl_keluar`, `status`) VALUES
+(4, 'siswa-4.jpg', '1234', '9206011271', '9206011603090001', 'Eka Saputra', 'Bintuni', '1997-10-27', 'P', 'Hobi', 'Cita cita', 'Anak Tiri', 4, 3, 'Jalur 5 SP 1 Kampung Waraitama', 'nik ayah', 'nama ayah', 'D2', 'pekr ayah', 'nik ibu', 'nama ibu', 'S1', 'pekr ibu', 'bbbbb', NULL, NULL, 'Aktif'),
+(5, 'siswa-5.jpg', '1235', '9206011272', NULL, 'Eka Saputre, A.Md', 'Bintuni 1', '1997-10-28', 'P', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(6, '', '1236', '9206011273', NULL, 'Eka Saputri, A.Md', 'Bintuni 2', '1997-10-29', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(7, '', '1237', '9206011274', NULL, 'Eka Saputru, A.Md', 'Bintuni 3', '1997-10-22', 'P', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(8, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(9, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(10, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(11, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(12, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(13, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(14, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(15, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(16, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(17, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(18, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Aktif'),
+(19, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Keluar'),
+(20, '', '1238', '9206011275', NULL, 'Eka Saputro, A.Md', 'Bintuni 4', '1997-10-21', 'L', NULL, NULL, NULL, NULL, NULL, 'Jalur 5 SP 1 Kampung Waraitama', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Alumni');
 
 -- --------------------------------------------------------
 
@@ -168,8 +375,18 @@ CREATE TABLE `tahun_akademik` (
   `idtahun_akademik` int(4) NOT NULL,
   `tahun_akademik` varchar(10) DEFAULT NULL,
   `semester` enum('Ganjil','Genap') DEFAULT NULL,
-  `semester_aktif` tinyint(4) DEFAULT NULL
+  `semester_aktif` tinyint(4) DEFAULT NULL,
+  `tempat` varchar(128) DEFAULT NULL,
+  `tanggal` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `tahun_akademik`
+--
+
+INSERT INTO `tahun_akademik` (`idtahun_akademik`, `tahun_akademik`, `semester`, `semester_aktif`, `tempat`, `tanggal`) VALUES
+(5, '2018-2019', 'Ganjil', 1, 'Manokwari', '2020-04-02'),
+(7, '2019-2020', 'Ganjil', 0, '', '2020-04-02');
 
 -- --------------------------------------------------------
 
@@ -182,28 +399,54 @@ CREATE TABLE `users` (
   `user_name` varchar(25) DEFAULT NULL,
   `user_password` varchar(128) DEFAULT NULL,
   `user_fullname` varchar(128) DEFAULT NULL,
-  `user_telp` varchar(15) DEFAULT NULL,
-  `user_type` enum('super_user','administrator','user') DEFAULT NULL,
-  `last_loggin` int(11) DEFAULT NULL,
-  `ip_address` varchar(20) DEFAULT NULL,
-  `is_active` int(1) DEFAULT NULL,
-  `is_block` int(1) DEFAULT NULL,
+  `user_type` enum('super_user','guru','siswa') DEFAULT NULL,
+  `is_block` tinyint(1) DEFAULT NULL,
   `create_at` int(11) DEFAULT NULL,
   `update_at` int(11) DEFAULT NULL,
-  `delete_at` int(11) DEFAULT NULL,
   `create_by` int(11) DEFAULT NULL,
-  `update_by` int(11) DEFAULT NULL,
-  `delete_by` int(11) DEFAULT NULL
+  `update_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`idusers`, `user_name`, `user_password`, `user_fullname`, `user_telp`, `user_type`, `last_loggin`, `ip_address`, `is_active`, `is_block`, `create_at`, `update_at`, `delete_at`, `create_by`, `update_by`, `delete_by`) VALUES
-(1, 'admin', '$2y$10$h6Mas3QjJTZgIfQH5jFiYOdsXKhzP0M08oVD.DXExrn.mA8RshOJa', 'KKNPayment', '082248577297', 'super_user', 1579819716, '::1', 1, 0, 1556509343, 1583875176, NULL, 1, 1, NULL),
-(7, '12345', '$2y$10$web6MQFKooLIbKPue2A0/O/.eKSzNIWsv5gCtnsp18WRumW3CtnIS', 'Eka Saputra', '082248577297', 'administrator', NULL, NULL, 1, 0, 1580293465, 1580298662, NULL, 1, 7, NULL),
-(8, '123', '$2y$10$XhaGOd2wM.jiB8ixjnyzgeM4J4n3dGPrpDlNTxbg/WrsIjWLlGhM.', 'Eka Saputra', '082248577297', 'user', NULL, NULL, 1, 0, 1580293507, 1580294962, NULL, 1, 1, NULL);
+INSERT INTO `users` (`idusers`, `user_name`, `user_password`, `user_fullname`, `user_type`, `is_block`, `create_at`, `update_at`, `create_by`, `update_by`) VALUES
+(1, 'admin', '$2y$10$aIi56P3ocLWVhiyC9kLlHOCkeg15/jfiZM88vQVzPMF2/V82XlkoO', 'SD N 2 Amban', 'super_user', 0, 1556509343, 1586934959, 1, 1),
+(18, '92060112710970001', '$2y$10$2B7QrPfBaSn.uIx92hcoYuQvpZC8gpeKGpoWHpQnq4mDq0483k5zW', 'Eka Saputra, A.Md', 'guru', 0, 1586150893, 1586934989, 1, 18),
+(29, '92060112710970002', '$2y$10$hTwF1b8UKv66utTJfA9t8O92VJFqp/1nUhWuS37TUCVEvR8Opa2Zi', 'Eka Saputre, A.Md', 'guru', 0, 1586151104, NULL, 1, NULL),
+(30, '92060112710970003', '$2y$10$e79TkCEI2gBpSzb06eaGIOE4UDQXPUzU0944QdSBp/Ir1rYzT/qWa', 'Eka Saputri, A.Md', 'guru', 0, 1586151104, NULL, 1, NULL),
+(31, '92060112710970004', '$2y$10$K7wLEa5sjGF.DpvNL1pkPek3Fc5iGzNzLiogwW.4LDt/8IfUr9fe.', 'Eka Saputru, A.Md', 'guru', 0, 1586151104, NULL, 1, NULL),
+(32, '92060112710970005', '$2y$10$3v47kVI.v0DDxM.lkDV.ruFB5RKrCOCAxcrQNomvOCkJwJVj77WPa', 'Eka Saputro, A.Md', 'guru', 0, 1586151104, NULL, 1, NULL),
+(33, '1234', '$2y$10$aWnRoZMNs8C9QWJZ4JAw1eiJPbvZEVAa7xFc9lJEacoYTnNMfSoim', 'Eka Saputra, A.Md', 'siswa', 0, 1586151396, 1586934893, 1, 1),
+(34, '1235', '$2y$10$eiZ0OMJzBRhCb6k7GSf7B.bdVKmg.X86vupS99UzwfwQ.a7.bSqNG', 'Eka Saputre, A.Md', 'siswa', 0, 1586151424, NULL, 1, NULL),
+(35, '1236', '$2y$10$0YtulRPXPy/Ow4.lnf7a2e5kC/oL7esBHra8S4Lmz4qq//yA3bTMi', 'Eka Saputri, A.Md', 'siswa', 0, 1586151424, NULL, 1, NULL),
+(36, '1237', '$2y$10$bPPkBOWarkxMgZ1d68u0luaLtxewnqyTIzzlwweiW2MgTzU7cCyuu', 'Eka Saputru, A.Md', 'siswa', 0, 1586151424, NULL, 1, NULL),
+(37, '1238', '$2y$10$V51RL6X.WKKbng4cafvO8e420beIWIoXALG8TGjxCqzYScyRt/Cgq', 'Eka Saputro, A.Md', 'siswa', 0, 1586151424, NULL, 1, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wali_kelas`
+--
+
+CREATE TABLE `wali_kelas` (
+  `idwali_kelas` int(4) NOT NULL,
+  `idtahun_akademik` int(4) NOT NULL,
+  `semester` enum('Ganjil','Genap') DEFAULT NULL,
+  `idkelas` int(4) NOT NULL,
+  `idguru` int(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `wali_kelas`
+--
+
+INSERT INTO `wali_kelas` (`idwali_kelas`, `idtahun_akademik`, `semester`, `idkelas`, `idguru`) VALUES
+(1, 5, 'Ganjil', 1, 7),
+(2, 5, 'Ganjil', 2, 7),
+(5, 7, 'Ganjil', 1, 7),
+(6, 7, 'Ganjil', 2, 7);
 
 -- --------------------------------------------------------
 
@@ -223,31 +466,13 @@ CREATE TABLE `_sessions` (
 --
 
 INSERT INTO `_sessions` (`id`, `ip_address`, `timestamp`, `data`) VALUES
-('d4ec5cdb74518176e36f5fa67c3e697e3be8c67a', '::1', 1584620622, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343632303632323b),
-('e3cf65cdc83ce1f74e61518aa6ad05e36c4329c7', '::1', 1584621387, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343632313338373b),
-('0454488754ff5ecebd2eff3dc8ca79f189bc533a', '::1', 1584621688, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343632313638383b),
-('a0495bf1b88541bb99c47b3d1138302c7aa3f86c', '::1', 1584621990, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343632313939303b),
-('53ad82a0efea80e311eff909ab39a431aa67fdd0', '::1', 1584622017, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343632313939303b),
-('fcdb8ddb22869882a76662254046cea41d93dd72', '::1', 1584679037, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343637383733393b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('b453d31ce9af40e5efec8675b34df14d0be80712', '::1', 1584704867, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730343836373b),
-('e2d15b773fa3b7b52f94dbdfeee39b84dbca1f0b', '::1', 1584705335, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730353333353b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('6d769e54b716fa1900705fb468e63cb9821ecfab', '::1', 1584705579, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730353333353b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('44a6a426d8d3df8838db8fed46c33eea4cf07698', '::1', 1584705946, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730353934363b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('4a1846f6cb5264f51cfaf3b24cbb8be40cab2060', '::1', 1584706295, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730363239353b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('d37c8876cd8704fccc0035a3c58549ef1a5e2416', '::1', 1584707017, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730373031373b),
-('b87160a8e7bb78231b7128909792fe2b88365842', '::1', 1584707403, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730373430333b),
-('a5c2ecd90240b2221df5e3cfcc799464c63ebcf4', '::1', 1584707714, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730373731343b),
-('3cccdf68f7559bf63863cefd6f26afdb4d7232e8', '::1', 1584708327, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730383332373b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('d38b5fb63c19801752e84cede0185b9687878090', '::1', 1584709045, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730393034353b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('bfcc46c950fe717d17930b5e2efbcba18914ae58', '::1', 1584709348, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730393334383b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('3b97ad90654d6b91a0736e1bf6f0eada98041ac3', '::1', 1584709747, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343730393734373b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('ca2416e825c18a06c9f67b13ebb9bfc2962e2b06', '::1', 1584710213, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343731303231333b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('2e7fffce5905b42c0cdbd88c48a70c623c247e48', '::1', 1584710621, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343731303632313b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('ecf27e9edc1ab713e60dc49a5b512d14c41665d1', '::1', 1584710943, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343731303934333b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('9b80e539784796b530b6ad87c880fa4b49177a19', '::1', 1584711246, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343731313234363b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('566a6ecc973132c24a1dc90c070771f7ac165681', '::1', 1584711614, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343731313631343b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('222c64084968b30bea9f5c45089c52fdea44e223', '::1', 1584711628, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343731313631343b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
-('cb9e11b121fa10d9993309f924b437d0e16e3ad5', '::1', 1584739281, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538343733393138313b);
+('71334974aea147141183957cc404b6e1a2e6e57d', '::1', 1586814175, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538363831343039313b69647c733a313a2231223b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
+('8bad0a255b402ed6fbc8990cb75141d689e5ab0f', '::1', 1586777287, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538363737373134343b69647c733a313a2231223b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
+('9e1a829420de7ba6602d2d3225daa20e022b021d', '::1', 1586695019, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538363639353031393b69647c733a313a2231223b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b737563636573737c733a32323a224b4b4d20626572686173696c2064692073696d70616e223b5f5f63695f766172737c613a313a7b733a373a2273756363657373223b733a333a226f6c64223b7d),
+('ac3a9bf9db61a7d32c1f6c481a3a1e0f726090d2', '::1', 1586936462, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538363933363436323b),
+('b476a9f16b5809ea493bdfb4302a3dbc9dbc91a3', '::1', 1586730110, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538363732393933373b69647c733a313a2231223b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b),
+('de163ab2224cc95c394a090c8c8f17ff5ba0298c', '::1', 1586865822, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538363836353738353b69647c733a323a223333223b757365726e616d657c733a343a2231323334223b6163636573737c733a353a227369737761223b),
+('eeba67f5e3024d58f72c90b6ada5fc3d4aa65c71', '::1', 1586757754, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538363735373732383b69647c733a313a2231223b757365726e616d657c733a353a2261646d696e223b6163636573737c733a31303a2273757065725f75736572223b);
 
 --
 -- Indexes for dumped tables
@@ -275,28 +500,35 @@ ALTER TABLE `mapel`
 -- Indexes for table `mengajar`
 --
 ALTER TABLE `mengajar`
-  ADD PRIMARY KEY (`idmengajar`,`tahun_akademik_idtahun_akademik`,`guru_idguru`,`mapel_idmapel`),
-  ADD KEY `fk_guru_has_mapel_mapel1_idx` (`mapel_idmapel`),
-  ADD KEY `fk_guru_has_mapel_guru1_idx` (`guru_idguru`),
-  ADD KEY `fk_mengajar_tahun_akademik1_idx` (`tahun_akademik_idtahun_akademik`);
+  ADD PRIMARY KEY (`idmengajar`,`idtahun_akademik`,`idguru`,`idmapel`,`idkelas`),
+  ADD KEY `fk_guru_has_mapel_mapel1_idx` (`idmapel`),
+  ADD KEY `fk_guru_has_mapel_guru1_idx` (`idguru`),
+  ADD KEY `fk_mengajar_tahun_akademik1_idx` (`idtahun_akademik`),
+  ADD KEY `fk_mengajar_kelas1_idx` (`idkelas`);
 
 --
 -- Indexes for table `nilai`
 --
 ALTER TABLE `nilai`
-  ADD PRIMARY KEY (`idnilai`,`mapel_idmapel`,`siswa_idsiswa`),
-  ADD KEY `fk_mapel_has_siswa_siswa1_idx` (`siswa_idsiswa`),
-  ADD KEY `fk_mapel_has_siswa_mapel1_idx` (`mapel_idmapel`);
+  ADD PRIMARY KEY (`idnilai`,`idtahun_akademik`,`idkelas`,`idmapel`,`idsiswa`),
+  ADD KEY `fk_mapel_has_siswa_siswa1_idx` (`idsiswa`),
+  ADD KEY `fk_mapel_has_siswa_mapel1_idx` (`idmapel`),
+  ADD KEY `fk_nilai_tahun_akademik1_idx` (`idtahun_akademik`),
+  ADD KEY `fk_nilai_kelas1_idx` (`idkelas`);
+
+--
+-- Indexes for table `profil_sekolah`
+--
+ALTER TABLE `profil_sekolah`
+  ADD PRIMARY KEY (`idprofil_sekolah`);
 
 --
 -- Indexes for table `rombel`
 --
 ALTER TABLE `rombel`
-  ADD PRIMARY KEY (`idrombel`,`tahun_akademik_idtahun_akademik`,`guru_idguru`,`kelas_idkelas`,`siswa_idsiswa`),
-  ADD KEY `fk_guru_has_kelas_kelas1_idx` (`kelas_idkelas`),
-  ADD KEY `fk_guru_has_kelas_guru_idx` (`guru_idguru`),
-  ADD KEY `fk_rombel_tahun_akademik1_idx` (`tahun_akademik_idtahun_akademik`),
-  ADD KEY `fk_rombel_siswa1_idx` (`siswa_idsiswa`);
+  ADD PRIMARY KEY (`idrombel`,`idwali_kelas`,`idsiswa`),
+  ADD KEY `fk_rombel_siswa1_idx` (`idsiswa`),
+  ADD KEY `fk_rombel_wali_kelas1_idx` (`idwali_kelas`);
 
 --
 -- Indexes for table `siswa`
@@ -317,9 +549,19 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`idusers`);
 
 --
+-- Indexes for table `wali_kelas`
+--
+ALTER TABLE `wali_kelas`
+  ADD PRIMARY KEY (`idwali_kelas`,`idtahun_akademik`,`idkelas`,`idguru`),
+  ADD KEY `fk_rombel_has_guru_guru1_idx` (`idguru`),
+  ADD KEY `fk_wali_kelas_kelas1_idx` (`idkelas`),
+  ADD KEY `fk_tahun_akademik_tahun_akademik1_idx` (`idtahun_akademik`);
+
+--
 -- Indexes for table `_sessions`
 --
 ALTER TABLE `_sessions`
+  ADD PRIMARY KEY (`id`),
   ADD KEY `ci_sessions_TIMESTAMP` (`timestamp`);
 
 --
@@ -330,43 +572,67 @@ ALTER TABLE `_sessions`
 -- AUTO_INCREMENT for table `guru`
 --
 ALTER TABLE `guru`
-  MODIFY `idguru` int(4) NOT NULL AUTO_INCREMENT;
+  MODIFY `idguru` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `kelas`
 --
 ALTER TABLE `kelas`
-  MODIFY `idkelas` int(4) NOT NULL AUTO_INCREMENT;
+  MODIFY `idkelas` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `mapel`
+--
+ALTER TABLE `mapel`
+  MODIFY `idmapel` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `mengajar`
 --
 ALTER TABLE `mengajar`
-  MODIFY `idmengajar` int(4) NOT NULL AUTO_INCREMENT;
+  MODIFY `idmengajar` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `nilai`
 --
 ALTER TABLE `nilai`
-  MODIFY `idnilai` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idnilai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+
+--
+-- AUTO_INCREMENT for table `profil_sekolah`
+--
+ALTER TABLE `profil_sekolah`
+  MODIFY `idprofil_sekolah` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `rombel`
 --
 ALTER TABLE `rombel`
-  MODIFY `idrombel` int(4) NOT NULL AUTO_INCREMENT;
+  MODIFY `idrombel` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `siswa`
 --
 ALTER TABLE `siswa`
-  MODIFY `idsiswa` int(4) NOT NULL AUTO_INCREMENT;
+  MODIFY `idsiswa` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT for table `tahun_akademik`
+--
+ALTER TABLE `tahun_akademik`
+  MODIFY `idtahun_akademik` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `idusers` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `idusers` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `wali_kelas`
+--
+ALTER TABLE `wali_kelas`
+  MODIFY `idwali_kelas` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -376,25 +642,34 @@ ALTER TABLE `users`
 -- Constraints for table `mengajar`
 --
 ALTER TABLE `mengajar`
-  ADD CONSTRAINT `fk_guru_has_mapel_guru1` FOREIGN KEY (`guru_idguru`) REFERENCES `guru` (`idguru`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_guru_has_mapel_mapel1` FOREIGN KEY (`mapel_idmapel`) REFERENCES `mapel` (`idmapel`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_mengajar_tahun_akademik1` FOREIGN KEY (`tahun_akademik_idtahun_akademik`) REFERENCES `tahun_akademik` (`idtahun_akademik`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_guru_has_mapel_guru1` FOREIGN KEY (`idguru`) REFERENCES `guru` (`idguru`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_guru_has_mapel_mapel1` FOREIGN KEY (`idmapel`) REFERENCES `mapel` (`idmapel`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_mengajar_kelas1` FOREIGN KEY (`idkelas`) REFERENCES `kelas` (`idkelas`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_mengajar_tahun_akademik1` FOREIGN KEY (`idtahun_akademik`) REFERENCES `tahun_akademik` (`idtahun_akademik`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `nilai`
 --
 ALTER TABLE `nilai`
-  ADD CONSTRAINT `fk_mapel_has_siswa_mapel1` FOREIGN KEY (`mapel_idmapel`) REFERENCES `mapel` (`idmapel`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_mapel_has_siswa_siswa1` FOREIGN KEY (`siswa_idsiswa`) REFERENCES `siswa` (`idsiswa`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_mapel_has_siswa_mapel1` FOREIGN KEY (`idmapel`) REFERENCES `mapel` (`idmapel`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_mapel_has_siswa_siswa1` FOREIGN KEY (`idsiswa`) REFERENCES `siswa` (`idsiswa`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_nilai_kelas1` FOREIGN KEY (`idkelas`) REFERENCES `kelas` (`idkelas`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_nilai_tahun_akademik1` FOREIGN KEY (`idtahun_akademik`) REFERENCES `tahun_akademik` (`idtahun_akademik`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `rombel`
 --
 ALTER TABLE `rombel`
-  ADD CONSTRAINT `fk_guru_has_kelas_guru` FOREIGN KEY (`guru_idguru`) REFERENCES `guru` (`idguru`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_guru_has_kelas_kelas1` FOREIGN KEY (`kelas_idkelas`) REFERENCES `kelas` (`idkelas`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_rombel_siswa1` FOREIGN KEY (`siswa_idsiswa`) REFERENCES `siswa` (`idsiswa`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_rombel_tahun_akademik1` FOREIGN KEY (`tahun_akademik_idtahun_akademik`) REFERENCES `tahun_akademik` (`idtahun_akademik`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_rombel_siswa1` FOREIGN KEY (`idsiswa`) REFERENCES `siswa` (`idsiswa`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_rombel_wali_kelas1` FOREIGN KEY (`idwali_kelas`) REFERENCES `wali_kelas` (`idwali_kelas`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `wali_kelas`
+--
+ALTER TABLE `wali_kelas`
+  ADD CONSTRAINT `fk_rombel_has_guru_guru1` FOREIGN KEY (`idguru`) REFERENCES `guru` (`idguru`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_tahun_akademik_tahun_akademik1` FOREIGN KEY (`idtahun_akademik`) REFERENCES `tahun_akademik` (`idtahun_akademik`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_wali_kelas_kelas1` FOREIGN KEY (`idkelas`) REFERENCES `kelas` (`idkelas`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

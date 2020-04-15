@@ -1,5 +1,206 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 /**
+* get __session
+* @param String $session_key
+* @return Any
+*/
+if ( ! function_exists('__session')) {
+	function __session( $session_key ) {
+		$CI = &get_instance();
+		return $CI->session->userdata( $session_key );
+	}
+}
+/**
+* get _active_years
+* @return Any
+*/
+if ( ! function_exists('_active_years')) {
+	function _active_years() {
+		$CI = &get_instance();
+		return $CI->db->get_where('tahun_akademik',['semester_aktif'=>1])->row();
+	}
+}
+/**
+* get _school_profile
+* @return Any
+*/
+if ( ! function_exists('_school_profile')) {
+	function _school_profile() {
+		$CI = &get_instance();
+		return $CI->db->get('profil_sekolah')->row();
+	}
+}
+
+/**
+* Data Mapel By Guru
+* @param String
+* @return Object
+*/
+if (!function_exists('mapel_by_guru')){
+	function mapel_by_guru($tahun_akademik,$semester,$idguru)
+	{
+		$CI =& get_instance();
+		return $CI->db->join('kelas k', 'k.idkelas = n.idkelas', 'left')
+		->join('mapel m', 'm.idmapel = n.idmapel', 'left')
+		->where(['n.idtahun_akademik'=>$tahun_akademik,'n.semester'=>$semester,'n.idguru'=>$idguru])
+		->get('mengajar n')->result();
+        
+	}
+}
+/**
+* List Mapel By Guru
+* @param String
+* @return Object
+*/
+if (!function_exists('list_mapel_by_guru')){
+	function list_mapel_by_guru($tahun_akademik,$semester,$nip)
+	{
+		$CI =& get_instance();
+		$guru = $CI->db->select('idguru')
+		->where('nip',$nip)
+		->get('guru')->row();
+		$idguru = $guru->idguru;
+		return $CI->db->join('kelas k', 'k.idkelas = n.idkelas', 'left')
+		->join('mapel m', 'm.idmapel = n.idmapel', 'left')
+		->where(['n.idtahun_akademik'=>$tahun_akademik,'n.semester'=>$semester,'n.idguru'=>$idguru])
+		->get('mengajar n')->result();
+        
+	}
+}
+/**
+* Data Siswa By Kelas
+* @param String
+* @return Object
+*/
+if (!function_exists('siswa_by_kelas')){
+	function siswa_by_kelas($tahun_akademik,$semester,$idkelas)
+	{
+		$CI =& get_instance();
+		return $CI->db->select('x1.idtahun_akademik,x1.semester,x2.idsiswa,x2.nis,x2.nama')
+		->join('wali_kelas x1', 'x1.idwali_kelas = x.idwali_kelas', 'left')
+		->join('siswa x2', 'x2.idsiswa = x.idsiswa', 'left')
+		->join('kelas x3', 'x3.idkelas = x1.idkelas', 'left')
+		->where(['x1.idtahun_akademik'=>$tahun_akademik,'x1.semester'=>$semester,'x1.idkelas'=>$idkelas,'x2.status'=>'Aktif'])
+		->get('rombel x')->result();
+        
+	}
+}
+/**
+* Data Nilai By Siswa
+* @param String
+* @return Object
+*/
+if (!function_exists('nilai_by_siswa')){
+	function nilai_by_siswa($tahun_akademik,$semester,$idkelas,$idmapel,$idsiswa)
+	{
+		$CI =& get_instance();
+		return $CI->db->select('*')
+		->where(['x.idtahun_akademik'=>$tahun_akademik,'x.semester'=>$semester,'x.idkelas'=>$idkelas,'x.idmapel'=>$idmapel,'x.idsiswa'=>$idsiswa])
+		->get('nilai x')->result();
+        
+	}
+}
+/**
+* Tahun Akademik
+* @param String
+* @return Object
+*/
+if (!function_exists('list_academic_year')){
+	function list_academic_year(){
+		$CI =& get_instance();
+		$CI->db->order_by('idtahun_akademik', 'desc');
+		return $CI->db->get('tahun_akademik')->result();
+	}
+}
+/**
+* Siswa
+* @param String
+* @return Object
+*/
+if (!function_exists('list_siswa')){
+	function list_siswa(){
+		$CI =& get_instance();
+		return $CI->db->get_where('siswa',['status'=>'Aktif'])->result();
+	}
+}
+/**
+* Guru
+* @param String
+* @return Object
+*/
+if (!function_exists('list_guru')){
+	function list_guru(){
+		$CI =& get_instance();
+		return $CI->db->get('guru')->result();
+	}
+}
+/**
+* Mata Pelajaran
+* @param String
+* @return Object
+*/
+if (!function_exists('list_mapel')){
+	function list_mapel(){
+		$CI =& get_instance();
+		return $CI->db->get('mapel')->result();
+	}
+}
+/**
+* Kelas
+* @param String
+* @return Object
+*/
+if (!function_exists('list_kelas')){
+	function list_kelas(){
+		$CI =& get_instance();
+		return $CI->db->get('kelas')->result();
+	}
+}
+/**
+* Pengguna
+* @param String
+* @return Object
+*/
+if (!function_exists('list_pengguna')){
+	function list_pengguna(){
+		$CI =& get_instance();
+		return $CI->db->get('users')->result();
+	}
+}
+/**
+* Jumlah Siswa
+* @param String
+* @return Object
+*/
+if (!function_exists('count_rombel')){
+	function count_rombel($id){
+		$CI =& get_instance();
+		return count($CI->db->get_where('rombel',['idwali_kelas'=>$id])->result());
+	}
+}
+/**
+* Chechk User
+* @param String
+* @return Array
+*/
+if (!function_exists('chechk_user')){
+	function check_user($user){
+		$CI =& get_instance();
+		return $CI->db->get_where('users',['user_name'=>$user])->num_rows();
+	}
+}
+/**
+* User
+* @param String
+* @return Array
+*/
+if (!function_exists('user')){
+	function user($id){
+		$CI =& get_instance();
+		return $CI->db->get_where('users',['idusers'=>$id])->row();
+	}
+}
+/**
 * Session login 
 * @param String
 * @return Boolean
@@ -33,200 +234,5 @@ if ( ! function_exists('_toInteger')) {
 	function _toInteger( $n ) {
 		$n = abs(intval(strval($n)));
 		return $n;
-	}
-}
-/**
-* Slugify
-* @param String
-* @return String
-*/
-if (! function_exists('slugify')) {
-	function slugify( $str ) {
-		$lettersNumbersSpacesHyphens = '/[^\-\s\pN\pL]+/u';
-		$spacesDuplicateHypens = '/[\-\s]+/';
-		$str = preg_replace($lettersNumbersSpacesHyphens, '', $str);
-		$str = preg_replace($spacesDuplicateHypens, '-', $str);
-		$str = trim($str, '-');
-		return strtolower($str);
-	}
-}
-/**
-* Setting View
-* @param String
-* @return String
-*/
-if (! function_exists('setview')) {
-	function setview( $str ) {
-		$lettersNumbersSpacesHyphens = '/[^\-\s\pN\pL]+/u';
-		$spacesDuplicateHypens = '/[\-\s]+/';
-		$str = preg_replace($lettersNumbersSpacesHyphens, ' ', $str);
-		$str = preg_replace($spacesDuplicateHypens, ' ', $str);
-		$str = trim($str, ' ');
-		return strtoupper($str);
-	}
-}
-/**
-* Limit View Text
-* @param String
-* @return String
-*/
-if(!function_exists('viewLimit')){
-	function viewLimit($text, $url){
-		$string = strip_tags($text);
-		if(strlen($string) > 150){
-			//truncate string
-			$stringCut = substr($string, 0, 150);
-			$endPoint = strrpos($stringCut, ' ');
-			//if the string doesn't contain space any space then it will cut without word basis
-			$string = $endPoint?substr($stringCut, 0, $endPoint):substr($stringCut, 0);
-			$string .= '...<a href="'.site_url('post/').$url.'">Read More</a>';
-		}
-		echo $string;
-	}
-}
-/**
-* Timezone List
-* @param String
-* @return String
-*/
-if (! function_exists('timezone_list')) {
-	function timezone_list() {
-		static $regions = array(DateTimeZone::ASIA);
-		$timezones = array();
-		foreach( $regions as $region ) {
-			$timezones = array_merge($timezones, DateTimeZone::listIdentifiers($region));
-		}
-		$timezone_offsets = array();
-		foreach($timezones as $timezone) {
-			$tz = new DateTimeZone($timezone);
-			$timezone_offsets[$timezone] = $tz->getOffset(new DateTime);
-		}
-		asort($timezone_offsets);
-		$timezone_list = array();
-		foreach( $timezone_offsets as $timezone => $offset ) {
-			$offset_prefix = $offset < 0 ? '-' : '+';
-			$offset_formatted = gmdate( 'H:i', abs($offset) );
-			$pretty_offset = "UTC${offset_prefix}${offset_formatted}";
-			$timezone_list[$timezone] = "(${pretty_offset}) $timezone";
-		}
-		return $timezone_list;
-	}
-}
-/**
-* Delete Mask Money
-* @param String
-* @return String
-*/
-if (! function_exists('delMask')) {
-	function delMask( $str ) {
-		return (int)implode('',explode('.',$str));
-	}
-}
-/**
-* View Format Money
-* @param String
-* @return String
-*/
-if (! function_exists('money')) {
-	function money( $str ) {
-		return number_format($str,0,',','.');
-	}
-}
-/**
-* Count
-* @param String
-* @return Array
-*/
-if (!function_exists('hitung')){
-	function hitung($tb=null,$sts_param=null,$sts=null){
-		$CI =& get_instance();
-		if($tb=='mahasiswa'){
-			if($sts==null||$sts==''){
-				return $CI->db->get_where($tb,['status<>'=>'Selesai'])->num_rows();
-			}else{
-				return $CI->db->get_where($tb,[$sts_param=>$sts,'status<>'=>'Selesai'])->num_rows();
-			}
-		}else{
-			if($sts==null||$sts==''){
-				return $CI->db->get($tb)->num_rows();
-			}else{
-				return $CI->db->get_where($tb,[$sts_param=>$sts])->num_rows();
-			}
-		}
-	}
-}
-/**
-* User
-* @param String
-* @return Array
-*/
-if (!function_exists('user')){
-	function user(){
-		$CI =& get_instance();
-		$sql = "select * from users where user_name='".$CI->session->userdata('username')."'";
-		return $CI->db->query($sql)->row_array();
-	}
-}
-/**
-* Settings
-* @param $group, $var
-* @return Array
-*/
-if (!function_exists('settings')){
-	function settings($group=null,$var=null){
-		$CI =& get_instance();
-		$sql = "select setting_value,setting_default from settings where setting_group='".$group."' and setting_variable='".$var."'";
-		$data = $CI->db->query($sql)->row_array();
-		if($data['setting_value']==null){
-			return $data['setting_default'];
-		}else{
-			return $data['setting_value'];
-		}
-	}
-}
-/**
-* Setting
-* @param $setting_group
-* @return Array
-*/
-if (!function_exists('setting')){
-	function setting($setting_group=null){
-		$CI =& get_instance();
-		return $CI->db->get_where('settings', ['setting_group'=>$setting_group])->result();
-	}
-}
-/**
-* Informasi
-* @param $norek
-* @return Array
-*/
-if (!function_exists('norek')){
-	function norek(){
-		$CI =& get_instance();
-		return $CI->db->get('rekening')->result();
-	}
-}
-/**
-* Get Date and Time Now
-*/
-if (! function_exists('get_dateTime')) {
-	function get_dateTime() {
-		$CI = &get_instance();
-		$CI->load->helper('date');
-		return now('Asia/Jayapura');
-	}
-}
-/**
-* Get ID Modal
-*/
-if (! function_exists('idModal')) {
-	function idModal($var='') {
-		if($var=='timezone'){
-			return 'modal_edit_timezone';
-		}elseif($var=='favicon'){
-			return 'modal_edit_favicon';
-		}else{
-			return 'modal_edit';
-		}
 	}
 }

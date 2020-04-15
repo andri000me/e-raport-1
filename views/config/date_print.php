@@ -12,30 +12,36 @@
 
 <!-- Main content -->
 <section class="content">
-    <!-- Default box -->
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">Title</h3>
-
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                    title="Collapse">
-                    <i class="fa fa-minus"></i></button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip"
-                    title="Remove">
-                    <i class="fa fa-times"></i></button>
-            </div>
         </div>
         <div class="box-body">
-            Start creating your amazing application!
+            <form action="<?=base_url('configuration/setTanggal');?>" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="tempat">Tempat Cetak<span class="text-red">*</span></label>
+                            <input type="hidden" name="idtahun_akademik" value="<?=$date_print->idtahun_akademik;?>">
+                            <input type="text" class="form-control" id="tempat" name="tempat"
+                                value="<?=$date_print->tempat;?>">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Tanggal Cetak<span class="text-red">*</span></label>
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <input type="text" class="form-control pull-right datepicker" name="tanggal"
+                                    value="<?=$date_print->tanggal;?>">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success btn-flat btn-sm pull-right"><i class="fa fa-save"></i>
+                    Simpan Perubahan</button>
+            </form>
         </div>
-        <!-- /.box-body -->
-        <div class="box-footer">
-            Footer
-        </div>
-        <!-- /.box-footer-->
     </div>
-    <!-- /.box -->
-
 </section>
-<!-- /.content -->
