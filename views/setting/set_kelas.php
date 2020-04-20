@@ -2,40 +2,7 @@
 $(document).ready(function() {
     showAcademicYear();
     getFromSourceList();
-    // $('#selesai_all').click(function() {
-    //     $('#modal_selesai').modal('show', {
-    //         backdrop: 'static',
-    //         keyboard: false
-    //     });
-    //     $('#selesai').click(function() {
-    //         var delete_check = $('.check:checked');
-    //         if (delete_check.length > 0) {
-    //             var delete_value = [];
-    //             $(delete_check).each(function() {
-    //                 delete_value.push($(this).val());
-    //             });
-    //             $.ajax({
-    //                 type: 'post',
-    //                 url: '<?=site_url();?>mahasiswa/selesai',
-    //                 data: {
-    //                     id: delete_value
-    //                 },
-    //                 success: function() {
-    //                     $('#modal_selesai').modal('hide');
-    //                     toastr.success("Status Update Successfully");
-    //                     setTimeout(() => {
-    //                         window.location =
-    //                             "<?=site_url();?>mahasiswa";
-    //                     }, 2500);
-    //                 }
-    //             })
-    //         } else {
-    //             $('#modal_selesai').modal('hide');
-    //             toastr.warning("Please Select Data To Change Status !");
-    //         }
-    //     })
-    // });
-
+    getFromTargetList();
 })
 
 function check_all(checked, el) {
