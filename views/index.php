@@ -266,7 +266,7 @@
                         </a>
                     </li>
                     <?php endif;?>
-                    <?php if(__session('access')=='super_user'):?>
+                    <?php if(__session('access')=='administrator'):?>
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-wrench"></i> <span>Maintenance</span>
@@ -334,7 +334,8 @@
             <div class="pull-right hidden-xs">
                 Page rendered in <strong>{elapsed_time}</strong> seconds.
             </div>
-            <strong>Copyright &copy; <?=date('Y');?> <a href="https://nokencode.com">Nokencode</a>.</strong> All rights
+            <strong>Copyright &copy; <?=date('Y');?> <a href="https://nokenstore.com/e-raport">e-Raport</a>.</strong>
+            All rights
             reserved.
         </footer>
     </div>
