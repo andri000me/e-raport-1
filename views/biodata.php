@@ -9,7 +9,7 @@
     <div class="box box-primary">
         <div class="box-body">
             <form action="<?=base_url('siswa/save');?>" method="post">
-                <p class="text-red" id="note">* Wajib diisi <br>Note: Jika belum memiliki NIP harap diisi dengan NIK
+                <p class="text-red" id="note">* Wajib diisi <br>Note: Jika belum memiliki NISN harap diisi dengan NIK
                 </p>
                 <!-- Custom Tabs -->
                 <div class="nav-tabs-custom">
