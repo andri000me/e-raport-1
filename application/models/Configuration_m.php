@@ -17,7 +17,9 @@ class Configuration_m extends CI_Model {
 
     public function getData()
     {
-        return $this->db->get_where(self::$table)->order_by('idtahun_akademik','desc')->result();
+        return $this->db
+        ->order_by('idtahun_akademik','desc')
+        ->get_where(self::$table)->result();
     }
     public function getDataById($id)
     {
