@@ -50,15 +50,15 @@ class Dashboard extends CI_Controller {
 		$config['file_name']             = 'logo-sekolah';
 		$this->load->library('upload', $config);
 		if ( ! $this->upload->do_upload('logo')){
-			// $this->upload->display_errors();die;
-			$this->toastr->error($this->upload->display_errors());
+			// $this->toastr->error($this->upload->display_errors());
+			$row = $this->db->get_where('profil_sekolah',['idprofil_sekolah'=>$id])->row();
+			$data['logo'] = $row->logo;
 		}else{
 			$gbr = $this->upload->data();
 			$data['logo'] = $gbr['file_name'];
-			$this->db->update('profil_sekolah', $data,['idprofil_sekolah'=>$id]);
-			$this->toastr->success('Data profil sekolah berhasil di update');
-            
 		}
+		$this->db->update('profil_sekolah', $data,['idprofil_sekolah'=>$id]);
+		$this->toastr->success('Data profil sekolah berhasil di update');
 		redirect('dashboard');
 	}
 
